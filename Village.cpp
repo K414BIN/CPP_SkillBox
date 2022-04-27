@@ -224,11 +224,26 @@ int main()
 	{
 		do {
 			std::cout << "Нажмите клавишу \"ВВОД\" для продолжения ... \n";
-			save_village(file_out, add_village());
-			save_site(file_out, add_site());
-			save_buildings(file_out, add_buildings());
-			save_flat(file_out, add_flat());
-			save_room(file_out, add_room());
+			village level1 = add_village();
+			site level2 = add_site();
+			save_village(file_out, level1);
+			save_site(file_out, level2);
+			for (int i = 0; i < level2.number_of_buildings; i++)
+			{
+				buildings level3 = add_buildings();
+				save_buildings(file_out, level3);
+				for (int j = 0; j < level3.apartments; j++)
+				{
+					flat level4 = add_flat();
+					save_flat(file_out, level4);
+					for (int k = 0; k < level4.number_of_rooms; k++)
+					{
+						room level5 = add_room();
+						save_room(file_out, level5);
+					}
+				}
+			}
+
 			done = answer();
 		} while (done);
 
