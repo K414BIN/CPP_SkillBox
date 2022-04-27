@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{e3208aea-5760-4e27-9232-35f52d4532a2}</ProjectGuid>
-    <RootNamespace>Village</RootNamespace>
+    <ProjectGuid>{1e8b6778-b56d-485b-b757-81376a1072fb}</ProjectGuid>
+    <RootNamespace>MapPractics</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Village.cpp" />
+    <ClCompile Include="MapPractics.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
