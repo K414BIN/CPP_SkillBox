@@ -1,92 +1,116 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <vector>
 //
 using namespace std;
 //
-typedef map<string, int,less<>> myMap;
+typedef map<char,int,less<>> myMap;
 //
-myMap Del(myMap& inputMap);
+tuple<string, string > splitedStrings(const string& str);
 bool abnormalSymbolsAreNotIn(const string& str);
 void show(myMap& inputMap);
-myMap Add(myMap& inputMap, pair <string, int> val);
+myMap  Add(myMap& inputMap, const string str);
+int stringFindChar(string str, int pos, char ch);
+bool checkWords(int x, int y);
 //
 int main()
 {
 	myMap myDictionary;
-	setlocale(LC_ALL, "Russian");
-	cout.imbue(locale(".1251"));
-	cin.imbue(locale(".866"));
-	string temp;
-	int j = 1;
-	bool done = true;
-	
-		cout << "\tДобро пожаловать в нашу поликлиннику #2!\nЗаписывайтесь в очередь самостоятельно! Подходите в регистратуру по слову \"Next\". " << endl;
-		cout << "При наступлении перерыва на обед (вводится слово \"lunch\") прием прекращается!\n";
-		cout << "Посмотреть сколько человек в очереди можно, высунув в окошко голову (вводится слово \"head\").\n";
+	setlocale(LC_ALL, "en-US");
+	string temp = "Crossbow";
+	cout << "\tWelcome User to anagram contest!\nUse English words only! Let us begin then! " << endl;
+	int j;
+
 	do {
+		cout <<"Enter two words via space to compare : \n";
 		getline(cin, temp);
+		j = stringFindChar(temp, 0, ' ');
+	} while (j == temp.length());
 
-		bool check = abnormalSymbolsAreNotIn(temp);
-
-		if ("head" == temp)
-		{
-			show(myDictionary);
-			check = false;
+		bool done = abnormalSymbolsAreNotIn(temp);
+	if (done) {
+		string word1;
+		string word2;
+		tie(word1, word2) = splitedStrings(temp);
+		bool compareLen = (word1.length() == word2.length());
+		bool compareWord = (word2 != word1);
+		if (compareLen) {
+							if (compareWord){
+							myDictionary.clear();
+							myDictionary = Add(myDictionary, word1);
+							int comp2 = myDictionary.size();
+							myDictionary = Add(myDictionary, word2);
+							int comp1 = myDictionary.size();
+							if (checkWords(comp1,comp2)) 
+									 cout << "\nYes, the words can be anagrams! ";
+								else cout << "\nNo, the words cannot be anagrams!";
+							}
+							else cout << "The words are the same !\n";
 		}
-		
-		done = ("lunch" != temp);
-
-		if (done) {
-
-					if ("Next" != temp ) {
-											if (check) Add(myDictionary, make_pair(temp, j++));
-											else cout << "\nНеправильно указана фамилия!\n";
-					}
-					else
-					{
-											if (!myDictionary.empty()) Del(myDictionary);
-											else  cout << "\nОчередь пуста!!!\n";
-
-					}
-		}
-
-	} while (done);
-
-	cout << endl;
-	show(myDictionary);
+		else cout << "The words cannot be anagrams - they have a different number of letters!\n";
+	}
+	else cout <<"It is not English word!"<< endl;
+	
 	cout  << endl;
-
+//	show(myDictionary);
 	system("pause");
 	return 0;
 }
 //
 bool abnormalSymbolsAreNotIn(const string& str) 
 {
-	const string match2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	const string match2 = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	std::size_t  found = str.find_first_not_of(match2);
 	if (found != std::string::npos) return false;
 	return true;
 }
 //
-myMap Del(myMap& inputMap)
+
+myMap  Add(myMap &inputMap,const string str)
 {
-	inputMap.erase(inputMap.begin());
+	vector<char> vec(begin(str), end(str));
+	for (int j = 0; j < vec.size(); j++) {
+		pair<char, int> item(vec[j],  j);
+		inputMap.insert(item);
+	}
 	return inputMap;
 }
 //
-myMap  Add(myMap &inputMap, pair <string, int> val)
+void show(myMap& Map)
 {
-	 inputMap.insert(val);
-	 return inputMap;
+	for (myMap::iterator it = Map.begin(); it != Map.end(); ++it) 
+	{
+		cout << it->first  << "  " << it->second;
+		cout << endl;
+	}
 }
 //
-void show(myMap& inputMap)
+int stringFindChar(string str, int pos, char ch)
 {
-	for (myMap::iterator it = inputMap.begin(); it != inputMap.end(); ++it)
-	{
-		cout << it->first;
-		cout << " , ";
+	while (pos != str.length()) {
+		if (str[pos] == ch) { break; }
+		pos++;
 	}
+	return pos;
+}
+// my favorite tuple
+tuple<string, string > splitedStrings(const string& str)
+{
+	string part1 = "";
+	string part2 = "";
+	int pos = stringFindChar(str, 0, ' ');
+	for (int k = 0; k < str.length(); k++) {
+		char temp = str[k];
+		if (k < pos) part1 += temp;
+		if (k > pos) part2 += temp;
+	}
+	tuple<string, string> result = { part1,part2 };
+	return result;
+}
+//
+bool checkWords(int x , int y)
+{
+	return (x == y);
 }
 // End of file.
