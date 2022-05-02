@@ -1,7 +1,7 @@
 #include <map>
 #include <string>
 #include <iostream>
-#include <vector>
+
 //
 using namespace std;
 //
@@ -69,9 +69,9 @@ bool abnormalSymbolsAreNotIn(const string& str)
 
 myMap  Add(myMap &inputMap,const string str)
 {
-	vector<char> vec(begin(str), end(str));
-	for (int j = 0; j < vec.size(); j++) {
-		pair<char, int> item(vec[j],  j);
+	for (int j = 0; j < str.length(); j++) 
+    {
+      	pair<char, int> item(str[j],  j);
 		inputMap.insert(item);
 	}
 	return inputMap;
