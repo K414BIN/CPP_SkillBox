@@ -4,15 +4,18 @@
 
 using namespace std;
 
+// this string is very helpfull !
+typedef 	map  < string, string > myMap;
+
 /*		define funcs start		*/
 pair<string, string > splitedStrings(const string& str);
-string  showOne(map <string, string> &myMap, const string& text);
-string  showTwo(map <string, string> &myMap, const string& text);
-map  < string, string> harvest(map  <string, string> myDictionary, string text1, string text2);
-void showAll(map <string, string> &myMap);
+map  < string, string> harvest(myMap  &myDictionary, string text1, string text2);
+void showAll(myMap &myMap);
 bool abnormalSymbolsAreNotIn(const string& str);
 int stringFindChar(string str, int pos, char ch);
 map  < string, string>  overLoad();
+string  showTwo(myMap& myMap, const string& text);
+string  showOne(myMap& myMap, const string& text);
 /*		define funcs end		*/
 
 //
@@ -20,11 +23,10 @@ int main()
 {
 	string temp;
 	pair < string, string > inputStrs;
-	map  < string, string> myRelatedMap = overLoad();
-	cout << "\t\t\tHello, user!\nWelcome to highintelegent phonebook! Please, input string below:  "<<endl;
+	map  < string, string > myRelatedMap = overLoad();
+	cout << "\t\t\tHello, user!\nWelcome to highintelligence phonebook! Please, input string below:  "<<endl;
 	getline(cin, temp);
 	cout  << endl;
-	
 
 	if (stringFindChar(temp, 0, ' ') != temp.length()) 
 	{
@@ -41,7 +43,7 @@ int main()
 		cout << showOne(myRelatedMap, temp) << endl;
 	}
 	
-	cout << "map size =  " << myRelatedMap.size() << endl;
+	cout << endl;
 	showAll(myRelatedMap);
 	system("pause");
 	return 0;
@@ -55,9 +57,10 @@ bool abnormalSymbolsAreNotIn(const string& str)
 	return true;
 }
 //
-map  < string, string>  overLoad()
+map  < string, string >  overLoad()
 {
 	map  <string, string> myDictionary;
+
 	myDictionary.insert(pair<string, string>("69-70-38", "Sidoroff"));
 	myDictionary.insert(make_pair<string, string>("69-70-31", "Petrov"));
 	myDictionary.insert(pair<string, string>("69-70-32", "Petrova"));
@@ -68,43 +71,36 @@ map  < string, string>  overLoad()
 
 	return myDictionary;
 }
-//
-map  < string, string> harvest(map  <string, string> myDictionary, string text1, string text2)
+map  < string, string> harvest(myMap  &myDictionary, string text1, string text2)
 {
 	myDictionary.insert(pair<string, string>(text1, text2));
 	return myDictionary;
 }
 //
-string  showOne(map <string, string>& myMap, const string& text)
+string  showOne( myMap &myMap, const string& text)
 {
-	// Уменя ошибка здесь - выводится только первая пара значений контейнера
-	// Как пройти по всем парам в контейнере map?
-	for (map <string, string>::iterator it = myMap.begin(); it != myMap.end(); ++it) {
-		if (it->second == text) return it->first;
-		else return text + " was not found!";
+	bool done = false;
+	string result = "";
+	for (map <string, string>::iterator it = myMap.begin(); it != myMap.end(); ++it)
+	{
+		if (it->second == text)
+		{		
+			done = true;
+			result += it->first + "\n";
+		}
 	}
+	if (done) return result;
+	else return text + " was not found!";
 }
 //
-string  showTwo(map <string, string> &myMap, const string &text)
+string  showTwo(myMap &myMap, const string &text)
 {
-	// Уменя ошибка здесь - выводится только первая пара значений контейнера
-	// Как пройти по всем парам в контейнере map?
-	int k = 0;
-
-	do {
-		 map <string, string>::iterator it = myMap.begin();
-
-			if (it->first == text) return it->second;
-		
-		 ++it;
-		 if (it == myMap.end()) k = myMap.size();
-		 else ++k;
-	} while (k != myMap.size());
-
-    return text + " was not found!";
+	map <string, string>::iterator it = myMap.find(text);
+	if (it->first == text) return it->second;
+	else  return text + " was not found!";
 }
 //
-void showAll(map <string, string> &myMap)
+void showAll(myMap& myMap)
 {
 	for (auto item : myMap)
 	{
