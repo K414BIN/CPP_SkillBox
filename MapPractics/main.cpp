@@ -7,44 +7,32 @@ using namespace std;
 //
 typedef map<char,int,less<>> myMap;
 //
+string inputStr();
 tuple<string, string > splitedStrings(const string& str);
-bool abnormalSymbolsAreNotIn(const string& str);
-void show(myMap& inputMap);
 myMap  Add(myMap& inputMap, const string str);
-int stringFindChar(string str, int pos, char ch);
-bool checkWords(int x, int y);
+int stringFindChar(const string str, int pos, char ch);
+bool checkWords(const string str1,const string str2);
+bool abnormalSymbolsAreNotIn(const string& str);
 //
 int main()
 {
-	myMap myDictionary;
 	setlocale(LC_ALL, "en-US");
-	string temp = "Crossbow";
 	cout << "\tWelcome User to anagram contest!\nUse English words only! Let us begin then! " << endl;
-	int j;
+	string text = inputStr();
+	bool done = abnormalSymbolsAreNotIn(text);
 
-	do {
-		cout <<"Enter two words via space to compare : \n";
-		getline(cin, temp);
-		j = stringFindChar(temp, 0, ' ');
-	} while (j == temp.length());
-
-		bool done = abnormalSymbolsAreNotIn(temp);
 	if (done) {
-		string word1;
-		string word2;
-		tie(word1, word2) = splitedStrings(temp);
+		
+		string word2, word1;
+		tie(word1, word2) = splitedStrings(text);
 		bool compareLen = (word1.length() == word2.length());
 		bool compareWord = (word2 != word1);
 		if (compareLen) {
 							if (compareWord){
-							myDictionary.clear();
-							myDictionary = Add(myDictionary, word1);
-							int comp2 = myDictionary.size();
-							myDictionary = Add(myDictionary, word2);
-							int comp1 = myDictionary.size();
-							if (checkWords(comp1,comp2)) 
-									 cout << "\nYes, the words can be anagrams! ";
-								else cout << "\nNo, the words cannot be anagrams!";
+							
+										if (checkWords(word2,word1)) 
+											 cout << "\nYes, the words can be anagrams! ";
+										else cout << "\nNo, the words cannot be anagrams!";
 							}
 							else cout << "The words are the same !\n";
 		}
@@ -53,7 +41,6 @@ int main()
 	else cout <<"It is not English word!"<< endl;
 	
 	cout  << endl;
-//	show(myDictionary);
 	system("pause");
 	return 0;
 }
@@ -66,7 +53,20 @@ bool abnormalSymbolsAreNotIn(const string& str)
 	return true;
 }
 //
+string inputStr()
+{
+	int j = 1;
+	string temp = "hello";
 
+	do {
+		cout << "Enter two words via space to compare : \n";
+		getline(cin, temp);
+		j = stringFindChar(temp, 0, ' ');
+	} while (j == temp.length());
+
+	return temp;
+}
+//
 myMap  Add(myMap &inputMap,const string str)
 {
 	for (int j = 0; j < str.length(); j++) 
@@ -77,16 +77,7 @@ myMap  Add(myMap &inputMap,const string str)
 	return inputMap;
 }
 //
-void show(myMap& Map)
-{
-	for (myMap::iterator it = Map.begin(); it != Map.end(); ++it) 
-	{
-		cout << it->first  << "  " << it->second;
-		cout << endl;
-	}
-}
-//
-int stringFindChar(string str, int pos, char ch)
+int stringFindChar(const string str, int pos, char ch)
 {
 	while (pos != str.length()) {
 		if (str[pos] == ch) { break; }
@@ -94,7 +85,7 @@ int stringFindChar(string str, int pos, char ch)
 	}
 	return pos;
 }
-// my favorite tuple
+//
 tuple<string, string > splitedStrings(const string& str)
 {
 	string part1 = "";
@@ -108,9 +99,15 @@ tuple<string, string > splitedStrings(const string& str)
 	tuple<string, string> result = { part1,part2 };
 	return result;
 }
-//
-bool checkWords(int x , int y)
+// That function is goal!
+bool checkWords(const string word2 , const string word1)
 {
-	return (x == y);
+	myMap myDictionary;
+	myDictionary.clear();
+	myDictionary = Add(myDictionary, word1);
+	int comp2 = myDictionary.size();
+	myDictionary = Add(myDictionary, word2);
+	int comp1 = myDictionary.size();
+	return (comp1 == comp2);
 }
 // End of file.
