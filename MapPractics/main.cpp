@@ -32,8 +32,8 @@ int main()
 							if (compareWord){
 							
 										if (checkWords(word2,word1)) 
-											 cout << "\nYes, the words can be anagrams! ";
-										else cout << "\nNo, the words cannot be anagrams!";
+											 cout << "\nYes, these words can be anagrams!";
+										else cout << "\nNo, these words cannot be anagrams!";
 							}
 							else cout << "The words are the same !\n";
 		}
@@ -68,11 +68,11 @@ string inputStr()
 	return temp;
 }
 //
-myMap  Add(myMap &inputMap,const string str)
+myMap Add(myMap &inputMap,const string str)
 {
 	for (std::size_t j = 0; j < str.length(); j++) 
     {
-      	pair<char, int> item(str[j],  stringSumChar(str,0,str[ j]));
+      	pair<char, int> item(str[j],  stringSumChar(str,0,str[j]));
 		inputMap.insert(item);
 	}
 	return inputMap;
@@ -116,30 +116,18 @@ bool checkWords(const string word2 , const string word1)
 	myMap myDictionary;
 	myDictionary.clear();
 	myDictionary = Add(myDictionary, word1);
-	int comp2 = myDictionary.size();
+	std::size_t comp2 = myDictionary.size();
 	if (comp2 != word1.length()) return deepAnalizeIt( myDictionary,word2);
 	myDictionary = Add(myDictionary, word2);
-	int comp1 = myDictionary.size();
+	std::size_t comp1 = myDictionary.size();
 	return (comp1 == comp2);
 }
 //That function is goal!
 bool deepAnalizeIt(myMap &myDictionary1, const string text)
 {
-	bool result = true;
-	bool done = result;
 	myMap myDictionary2;
 	myDictionary2.clear();
 	myDictionary2 =Add(myDictionary2, text);
-	myMap::iterator it1 = myDictionary1.begin(); 
-	myMap::iterator it2 = myDictionary2.begin(); 
-	do 
-	{
-		if ((it2->second) != (it1->second )) result=false;
-		++it1, ++it2;
-		if (it2 == myDictionary2.end())  done=false;
-		
-	} while (done);
-
-	return result;
+	return (myDictionary2 == myDictionary1);
 }
 // End of file.
