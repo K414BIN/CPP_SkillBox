@@ -9,7 +9,6 @@
 #include "disk.h"
 #include "cpu.h"
 
-typedef  std::array<int, 8> Tarray;
 
 //
 std::string parsingStrToLowerCase(const std::string text)
@@ -31,21 +30,33 @@ int caseOfItems(const std::string text, std::array<std::string, 6 > commands)
 //
 int main()
 {
+	std::array<int, 8> UserArr = { 0 };
 	std::string inputStr;
 	bool cycle = true;
+	std::cout << "\t\tHello, user!\n";
+	std::cout << "Let's see how a computer works today. For this you need to enter the following commands:\n";
+	std::cout << "display - to show result. \n";
+	std::cout << "input - for enter values. \n";
+	std::cout << "sum - for calculate values. \n";
+	std::cout << "save - to save values to disk. \n";
+	std::cout << "load - to load values from disk. \n";
+	std::cout << "exit - to exit simulation. \n";
 	do {
-		std::cout << "\t\tHello, user!\nPlease, enter action word to proceed: " << std::endl;
+		//Симуляция работы компьютера
+		std::cout << "Please, enter action word to proceed: " << std::endl;
 		std::cin.sync();
 		std::cin >> inputStr;
 		inputStr = parsingStrToLowerCase(inputStr);
 		int answer = caseOfItems(inputStr, comands);
-		Tarray UserArr = { 0 };
+		
 		switch (answer)
 		{
 
 		case 1:	UserArr = read(write(inputDigits(UserArr)));
 	   			break;
-		case 2:	VGAOutput(read(write(UserArr)));
+		case 2:	UserArr = write(UserArr);// push to PC RAM - simulation
+				UserArr = read(UserArr);// pop from PC RAM - simulation
+				VGAOutput(UserArr); // output to screen PC - simulation
 				break;
 		case 3:	UserArr = read(write(load(file)));
 				break;

@@ -1,13 +1,13 @@
+#include <array>
 #include <iostream>
+#include <string>
 #include <fstream>
 #include "disk.h"
 
-typedef  std::array<int, 8> Tarray;
-
 //
-Tarray load(const std::string inputStr)
+ std::array<int, 8>  load(const std::string inputStr)
 {
-    Tarray  result = {0};
+     std::array<int, 8>   result = {0};
     int end = sizeof(result) / sizeof(result[0]);
     std::ifstream file;
     file.open(inputStr);
@@ -24,7 +24,7 @@ Tarray load(const std::string inputStr)
     return result;
 }
 //
-void save(const std::string _file,const Tarray &inputArr )
+void save(const std::string _file,const  std::array<int, 8>  &inputArr )
 {
     std::ofstream file(_file);
     if (!file.is_open()) {

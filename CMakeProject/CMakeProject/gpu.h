@@ -1,7 +1,7 @@
 #pragma once
-
+#include <array>
 #ifndef GPU_H
 #define GPU_H
-typedef  std::array<int, 8> Tarray;
-void VGAOutput(const Tarray& inArray);
+
+void VGAOutput(const  std::array<int, 8> &inArray);
 #endif 

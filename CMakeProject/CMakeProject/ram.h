@@ -1,10 +1,10 @@
 #pragma once
-
+#include <array>
 
 #ifndef RAM_H
 #define RAM_H
-typedef  std::array<int, 8> Tarray;
-Tarray write(const Tarray &inArray);
-Tarray read(const Tarray &inArray);
+
+ std::array<int, 8> write(const std::array<int, 8>  &inArray);
+ std::array<int, 8> read(const std::array<int, 8>  &inArray);
 
 #endif 

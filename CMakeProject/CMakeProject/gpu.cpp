@@ -1,9 +1,9 @@
-#include <iostream>
 #include "gpu.h"
+#include <array>
+#include <iostream>
 
-typedef  std::array<int, 8> Tarray;
 
-void VGAOutput(const Tarray &inArray)
+void VGAOutput(const  std::array<int, 8>  &inArray)
 {
     int len = sizeof(inArray) / sizeof(inArray[0]);
     

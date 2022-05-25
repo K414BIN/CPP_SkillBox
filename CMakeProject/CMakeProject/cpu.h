@@ -1,7 +1,7 @@
 #pragma once
-
+#include <array>
 #ifndef CPU_H
 #define CPU_H
-typedef  std::array<int, 8> Tarray;
-void compute(const Tarray& inArray);
+
+void compute(const  std::array<int, 8> &inArray);
 #endif 

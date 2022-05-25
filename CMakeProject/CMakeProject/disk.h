@@ -1,8 +1,7 @@
 #pragma once
-
+#include <array>
 #ifndef DISK_H
 #define DISK_H
-typedef  std::array<int, 8> Tarray;
-Tarray load(const std::string inputStr);
-void save(const std::string _file, const Tarray& inputArr);
+std::array<int, 8>  load(const std::string inputStr);
+void save(const std::string _file, const  std::array<int, 8> & inputArr);
 #endif 

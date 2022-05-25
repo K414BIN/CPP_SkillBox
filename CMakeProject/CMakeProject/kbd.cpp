@@ -1,9 +1,7 @@
-#include <iostream>
-#include <array>
-#include <string>
 #include "kbd.h"
-
-typedef  std::array<int, 8> Tarray;
+#include <array>
+#include <iostream>
+#include <string>
 
 //
 bool abnormalSymbols(const std::string& str, const std::string& match)
@@ -13,7 +11,7 @@ bool abnormalSymbols(const std::string& str, const std::string& match)
     return true;
 }
 //
-Tarray inputDigits(Tarray buffer)
+ std::array<int, 8> inputDigits( std::array<int, 8> &buffer)
 {
     int size = sizeof(buffer) / sizeof(buffer[0]);
     std::cout << "\nPlease, enter eight integer numbers. \n";
