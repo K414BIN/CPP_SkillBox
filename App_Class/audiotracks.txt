@@ -1,0 +1,15 @@
+Name of track: Hotel California
+Duration of audio record: 211
+Date of creation: 02/03/1960
+Name of track: Master of puppets
+Duration of audio record: 123
+Date of creation: 03/04/1980
+Name of track: Sunligth
+Duration of audio record: 3231
+Date of creation: 04/05/2022
+Name of track: Sunligth
+Duration of audio record: 3231
+Date of creation: 04/05/2022
+Name of track: 323
+Duration of audio record: 123
+Date of creation: 04/05/2022
