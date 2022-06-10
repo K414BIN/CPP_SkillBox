@@ -39,10 +39,16 @@ public:
     Player(std::string text)
     {
         file_name = text;
+        std::vector<Track> records = collectRecords(howManyLines(file_name));
     }
-    std::vector<Track> records = collectRecords(howManyLines(file_name));
+
+    void show()
+    {
+        showClass(std::cout, records);
+    }
+
 private :
-   
+    std::vector<Track> records;
 
     std::vector<Track> collectRecords(int val)
     {
@@ -248,14 +254,14 @@ private :
     {
         using namespace std;
         ifstream file(file_name);
-        cout << file_name << endl;
+      
         file.seekg(0, file.beg);
         int i = 0;
         string line;
         while (getline(file, line))
         {
             i++;
-            cout << line << endl;
+          
         }
         file.close();
         return i;
@@ -267,7 +273,7 @@ int main()
     setlocale(LC_ALL, "Russian");
    
     Player MyPlayer(file_);
-        
+    MyPlayer.show();
     system("pause");
     return 0;
 }
