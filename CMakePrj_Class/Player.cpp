@@ -2,16 +2,45 @@
 #include "Track.h"
 
 // Constructor    
-Player::Player(std::string text)
+Player::Player(std::string text, bool ask = false)
     {
         file_name = text;
-        std::vector<Track> records = collectRecords(howManyLines(file_name));
+        total_records = howManyLines(file_name);
+        std::vector<Track> records = collectRecords(total_records);
+        if (ask) showClass(records,std::cout);
     }
 //
 void Player::show()
 {
-        showClass(std::cout, records);
-} 
+   showClass(getVecRecords(), std::cout);
+}
+//
+void Player::play(Track& track)
+{
+   showAllFields(track,std::cout);
+}
+//
+void Player::pause(Track& track)
+{
+}
+//
+void Player::stop(Track& track)
+{
+}
+//
+void Player::next(Track& track)
+{
+}
+//
+void Player::exit()
+{
+}
+//
+std::vector<Track> Player::getVecRecords()
+{
+ //   std::cout << "Vector of records has size " << records.size() << std::endl;
+    return records;
+}
 //
 std::vector<Track> Player::collectRecords(int val)
 {
@@ -47,6 +76,23 @@ std::vector<Track> Player::collectRecords(int val)
         return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
     }
 //
+ int Player::howManyLines(std::string file_name)
+ {
+     using namespace std;
+     ifstream file(file_name);
+
+     file.seekg(0, file.beg);
+     int i = 0;
+     string line;
+     while (getline(file, line))
+     {
+         i++;
+
+     }
+     file.close();
+     return i;
+ }
+ //
 int Player::days(int year, int month)
 {
         bool value = Player::is_leap_year(year);
@@ -62,7 +108,7 @@ int Player::days(int year, int month)
         return days;
 }
 //
-std::string Player::stringFindChar(const std::string str, int pos, const char ch)
+std::string Player::stringFindChar(const std::string str, size_t pos, const char ch)
 {
         std::string temp = "";
         while (pos--) {
@@ -79,7 +125,7 @@ void Player::saveRecords(std::vector <Track>& vector)
             std::cout << "\nError open file!\n";
             return;
         }
-        showClass(file_out, vector);
+        showClass(vector,file_out);
         file_out.close();
 }
 //
@@ -93,7 +139,7 @@ Track Player::loadRecord(std::ifstream& file)
         int userMonth;
         int userYear;
         time_t temp;
-        int sum;
+        size_t sum;
         getline(file, name);
         treck.name = stringFindChar(name, name.length(), ':');
         getline(file, name);
@@ -116,17 +162,8 @@ Track Player::loadRecord(std::ifstream& file)
         return treck;
 }
 //
-void Player::showClass(std::ostream& file, std::vector <Track>  arr)
-{
-        for (size_t i = 0; i < arr.size(); i++)
-        {
-            showAllFields(file, arr[i]);
-        }
-}
-//
 Track Player::addRecord()
 {
-   
         Track treck;
         std::string name;
         int userDay;
@@ -192,38 +229,29 @@ Track Player::addRecord()
         return treck;
 }
 //
-  void Player::showAllFields(std::ostream& out, Track inp)
- {
-        int userDay = inp.date.tm_mon;
-        int userMonth = 1 + inp.date.tm_mon;
-        int userYear = XXCentury + inp.date.tm_year;
-        std::string total = "Date of creation: ";
-        total += (userDay < 10 ? "0" + std::to_string(userDay) : std::to_string(userDay));
-        total += "/";
-        total += (userMonth < 10 ? "0" + std::to_string(userMonth) : std::to_string(userMonth));
-        total += "/" + std::to_string(userYear);
+void Player::showAllFields(const Track& inp, std::ostream& file)
+{
+    int userDay = inp.date.tm_mon;
+    int userMonth = 1 + inp.date.tm_mon;
+    int userYear = XXCentury + inp.date.tm_year;
+    std::string total = "Date of creation: ";
+    total += (userDay < 10 ? "0" + std::to_string(userDay) : std::to_string(userDay));
+    total += "/";
+    total += (userMonth < 10 ? "0" + std::to_string(userMonth) : std::to_string(userMonth));
+    total += "/" + std::to_string(userYear);
+    total += "\n";
 
-        out << "Name of track: " << inp.name;
-        out << "\n";
-        out << "Duration of audio record: " << inp.duration;
-        out << "\n";
-        out << total;
-        out << "\n";
+    file << "Name of track: " << inp.name;
+    file << "\n";
+    file << "Duration of audio record: " << inp.duration;
+    file << "\n";
+    file << total;
 }
 //
-int Player::howManyLines(std::string file_name)
+void Player::showClass(const std::vector <Track>& arr, std::ostream& file)
+{
+    for (size_t i = 0; i < arr.size(); i++)
     {
-        using namespace std;
-        ifstream file(file_name);
-      
-        file.seekg(0, file.beg);
-        int i = 0;
-        string line;
-        while (getline(file, line))
-        {
-            i++;
-          
-        }
-        file.close();
-        return i;
+        showAllFields(arr[i], file);
+    }
 }

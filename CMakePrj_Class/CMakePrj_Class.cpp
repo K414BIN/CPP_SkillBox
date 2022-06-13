@@ -12,8 +12,9 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
 
-    Player MyPlayer(file_);
-    MyPlayer.show();
+    Player MyPlayer(file_, false);// При значении второго параметра true выводится список треков
+    
+    MyPlayer.show();// Этот метод не выводит список треков! Почему?
     system("pause");
     return 0;
 }

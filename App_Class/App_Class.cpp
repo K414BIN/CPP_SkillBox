@@ -36,19 +36,25 @@ class Player
 public:
 
     std::string file_name;
-    Player(std::string text)
+    Player(std::string text, bool val = false)
     {
         file_name = text;
         std::vector<Track> records = collectRecords(howManyLines(file_name));
-    }
-
-    void show()
-    {
-        showClass(std::cout, records);
+        if (val) showClass(std::cout, records); 
     }
 
 private :
     std::vector<Track> records;
+
+    void showClass(std::ostream& file, std::vector <Track>& t)
+    {
+       
+        for (size_t i = 0; i < t.size(); i++)
+        {
+            showAllFields(file, t[i]);
+        }
+        
+    }
 
     std::vector<Track> collectRecords(int val)
     {
@@ -69,13 +75,14 @@ private :
         else
         {
             std::ifstream file_in(file_name);
+        
             while (counter--)
             {
                 result.push_back(loadRecord(file_in));
             }
             file_in.close();
         }
-
+    
         return result;
     }
     //
@@ -149,18 +156,10 @@ private :
         treck.date.tm_year = userYear - XXCentury;
         treck.date.tm_mon = userMonth - 1;
         treck.date.tm_mday = userDay;
-
+      
         return treck;
     }
     /*                      */        
-    void showClass(std::ostream& file, std::vector <Track> t)
-    {
-        for (size_t i = 0; i < t.size(); i++)
-        {
-            showAllFields(file, t[i]);
-        }
-    }
-    /*                  */        
     Track addRecord()
     {
         using namespace std;
@@ -231,7 +230,7 @@ private :
         return treck;
     }
     //
-    void showAllFields(std::ostream& out, Track inp)
+    void showAllFields(std::ostream& out, Track &inp)
     {
         int userDay = inp.date.tm_mon;
         int userMonth = 1 + inp.date.tm_mon;
@@ -241,7 +240,7 @@ private :
         total += "/";
         total += (userMonth < 10 ? "0" + std::to_string(userMonth) : std::to_string(userMonth));
         total += "/" + std::to_string(userYear);
-
+      
         out << "Name of track: " << inp.name;
         out << "\n";
         out << "Duration of audio record: " << inp.duration;
@@ -261,7 +260,7 @@ private :
         while (getline(file, line))
         {
             i++;
-          
+
         }
         file.close();
         return i;
@@ -272,8 +271,8 @@ int main()
 {
     setlocale(LC_ALL, "Russian");
    
-    Player MyPlayer(file_);
-    MyPlayer.show();
+    Player   MyPlayer(file_,true);
+
     system("pause");
     return 0;
 }
