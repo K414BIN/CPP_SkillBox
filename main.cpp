@@ -1,4 +1,13 @@
 #include "contact.cpp"
+#include "serviceSMS.cpp"
+#include "serviceCall.cpp"
+#include "mobile.cpp"
+#include <string>
+#include <ctime>
+#include <fstream>
+#include <iostream>
+#include <vector>
+#include <ostream>
 
 
 int main()

@@ -6,8 +6,8 @@ cmake_minimum_required (VERSION 3.8)
 project ("mobile")
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (mobile "main.cpp" "main.h" "Contact.h" "Contact.cpp")
+add_executable (mobile "main.cpp" "main.h" "contact.h" "contact.cpp" "serviceSMS.h" "serviceSMS.cpp" "serviceCall.h" "serviceCall.cpp" "mobile.h" "mobile.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET CMakePrj_Class PROPERTY CXX_STANDARD 20)
+  set_property(TARGET CMakePrj_Class PROPERTY CXX_STANDARD 14)
 endif()
