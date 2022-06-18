@@ -1,9 +1,9 @@
-﻿#define  _CRT_SECURE_NO_WARNINGS
+#define  _CRT_SECURE_NO_WARNINGS
 #include <string>
 #include <ctime>
+#include <vector>
 #include <fstream>
 #include <iostream>
-#include <vector>
 #include <ostream>
 
 const int XXCentury = 1900;
@@ -13,8 +13,9 @@ const std::string file_ = "audiotracks.txt";
 class Track
 {
 public:
-    std::string   name;
-    std::tm     date = createDate();
+    
+    std::string name;
+    std::tm date = createDate();
     std::time_t duration;
 private:
     std::tm createDate() {
@@ -30,60 +31,135 @@ private:
         return tm;
     }
 };
-
-class Player
+//
+class TrackList
 {
 public:
+    std::string file_name = file_;
 
-    std::string file_name;
-    Player(std::string text, bool val = false)
+    void showOne(std::ostream& out, Track inp)
     {
-        file_name = text;
-        std::vector<Track> records = collectRecords(howManyLines(file_name));
-        if (val) showClass(std::cout, records); 
+        int userDay = inp.date.tm_mon;
+        int userMonth = 1 + inp.date.tm_mon;
+        int userYear = XXCentury + inp.date.tm_year;
+        int count = 1;
+
+        std::string  total = (userDay < 10 ? "0" + std::to_string(userDay) : std::to_string(userDay));
+        total += "/";
+        total += (userMonth < 10 ? "0" + std::to_string(userMonth) : std::to_string(userMonth));
+        total += "/" + std::to_string(userYear);
+        out << inp.name << "\t";
+        out << inp.duration << "\t";
+        out << total;
+        out << "\n";
     }
-
-private :
-    std::vector<Track> records;
-
-    void showClass(std::ostream& file, std::vector <Track>& t)
+  //
+    void show()
     {
+        std::cout << "\tName\t\tDuration\t\tDate\n";
+        showClass(std::cout, tracks);
+    }
+    //
+private:
+	int linesCount = TrackList::howManyLines(file_name) - 1 ;
+    std::vector<Track>  tracks  = TrackList::collectRecords(linesCount);
+    int list_count = ((!tracks.empty()) ? tracks.size() : 0);
+  //
+	int howManyLines(std::string file_name)
+	{
+		using namespace std;
+		ifstream file(file_name);
+
+		file.seekg(0, file.beg);
+		int i = 0;
+		string line;
+		while (getline(file, line))
+		{
+			i++;
+		}
+		file.close();
+		return i;
+	}
+    //
+    Track loadRecord(std::ifstream& file)
+    {
+        Track treck = {};
+        using namespace std;
+        if (file.bad()) {
+            std::cout << "\nError open file!\n";
+            return treck;
+        }
+        string name;
+        time_t temp = 9;
        
-        for (size_t i = 0; i < t.size(); i++)
-        {
-            showAllFields(file, t[i]);
-        }
-        
+        getline(file, name);
+     
+        string strTemp = stringFindChar(name, name.length(), '/', true);
+        int userYear = stoi(strTemp);
+        size_t sum = name.length() - strTemp.length() - 1;
+        strTemp = stringFindChar(name, sum, '/', true);
+        int userMonth = stoi(strTemp);
+        sum = sum - strTemp.length() - 1;
+        strTemp = stringFindChar(name, sum, '\t', true);
+        int userDay = stoi(strTemp);
+        sum = sum - strTemp.length() - 1;
+        strTemp = stringFindChar(name, sum, '\t', true);
+        temp = (time_t)stoi(strTemp);
+        strTemp = stringFindChar(name, 0, '\t', false);
+        treck.duration = temp;
+        treck.date.tm_year = userYear - XXCentury;
+        treck.date.tm_mon = userMonth - 1;
+        treck.date.tm_mday = userDay;
+        treck.name = strTemp;
+        return treck;
     }
-
-    std::vector<Track> collectRecords(int val)
-    {
-        std::vector <Track> result;
-        int y = 1;
-        int counter = val / 3;
-
-        if (val < 3) {
-            while (y)
-            {
-                Track treck = addRecord();
-                result.push_back(treck);
-                std::cout << "Add another audio record? [1 - yes / 0 - no] : ";
-                std::cin >> y;
-                saveRecords(result);
-            }
-        }
-        else
+    //
+    std::vector<Track> collectRecords(int linesCount)
+	{
+        bool answer = false;
+        std::vector<Track> records;
+        records.clear();
+        if (linesCount > 0)
         {
             std::ifstream file_in(file_name);
-        
-            while (counter--)
+            file_in.seekg(0, file_in.beg);
+            do
             {
-                result.push_back(loadRecord(file_in));
-            }
+                records.emplace_back(loadRecord(file_in));
+            }  while (linesCount--);
             file_in.close();
         }
-    
-        return result;
+        else 
+        {
+           do 
+            {
+                records.emplace_back(addRecord());
+                std::cout << "Add another audio record? [1 - yes / 0 - no] : ";
+                std::cin >> answer;
+            } while (answer);
+
+              saveRecords(records);
+        }
+        return records;
+	}
+    //
+    void saveRecords(std::vector<Track> &records)
+    {
+        std::ofstream file_out(file_name, std::ios::app);
+        if (!file_out.is_open()) {
+            std::cout << "\nError open file!\n";
+            return;
+        }
+        showClass(file_out, records);
+        file_out.close();
+    }
+    //
+    void showClass(std::ostream& file, std::vector<Track>& records)
+    {
+        for (auto& it : records)
+        {
+             showOne(file, it);
+        }
     }
     //
     bool is_leap_year(int year)
@@ -106,64 +182,10 @@ private :
         return days;
     }
     //
-    std::string stringFindChar(const std::string str, int pos, const char ch)
-    {
-        std::string temp = "";
-        while (pos--) {
-            if (str[pos] == ch) { break; }
-            temp = str[pos] + temp;
-        }
-        return temp;
-    }
-    //
-    void saveRecords(std::vector <Track>& vector)
-    {
-        std::ofstream file_out(file_, std::ios::app);
-        if (!file_out.is_open()) {
-            std::cout << "\nError open file!\n";
-            return;
-        }
-        showClass(file_out, vector);
-        file_out.close();
-    }
-    //
-    Track loadRecord(std::ifstream& file)
-    {
-        using namespace std;
-        Track treck;
-        if (file.bad()) return treck;
-        string name;
-        int userDay;
-        int userMonth;
-        int userYear;
-        time_t temp;
-        int sum;
-        getline(file, name);
-        treck.name = stringFindChar(name, name.length(), ':');
-        getline(file, name);
-        string strTemp = stringFindChar(name, name.length(), ':');
-        temp = (time_t)stoi(strTemp);
-        treck.duration = temp;
-        getline(file, name);
-        strTemp = stringFindChar(name, name.length(), ':');
-        name = stringFindChar(strTemp, strTemp.length(), '/');
-        userYear = stoi(name);
-        sum = strTemp.length() - name.length() - 1;
-        name = stringFindChar(strTemp, sum, '/');
-        userMonth = stoi(name);
-        name = stringFindChar(strTemp, sum - name.length() - 1, ' ');
-        userDay = stoi(strTemp);
-        treck.date.tm_year = userYear - XXCentury;
-        treck.date.tm_mon = userMonth - 1;
-        treck.date.tm_mday = userDay;
-      
-        return treck;
-    }
-    /*                      */        
     Track addRecord()
     {
         using namespace std;
-        Track treck;
+        Track  treck = {};
         string name;
         int userDay;
         int userMonth;
@@ -175,7 +197,7 @@ private :
         } while (name.length() < 2);
         treck.name = name;
         cout << endl;
-        cout << "Please, enter the date of creation of аudio record: ";
+        cout << "Please, enter the date of creation of �udio record: ";
         cout << endl;
         //      
         do {
@@ -227,52 +249,41 @@ private :
         cin >> temp;
         treck.duration = temp;
         cout << endl;
+        
         return treck;
     }
-    //
-    void showAllFields(std::ostream& out, Track &inp)
-    {
-        int userDay = inp.date.tm_mon;
-        int userMonth = 1 + inp.date.tm_mon;
-        int userYear = XXCentury + inp.date.tm_year;
-        std::string total = "Date of creation: ";
-        total += (userDay < 10 ? "0" + std::to_string(userDay) : std::to_string(userDay));
-        total += "/";
-        total += (userMonth < 10 ? "0" + std::to_string(userMonth) : std::to_string(userMonth));
-        total += "/" + std::to_string(userYear);
-      
-        out << "Name of track: " << inp.name;
-        out << "\n";
-        out << "Duration of audio record: " << inp.duration;
-        out << "\n";
-        out << total;
-        out << "\n";
-    }
-    //
-    int howManyLines(std::string file_name)
-    {
-        using namespace std;
-        ifstream file(file_name);
-      
-        file.seekg(0, file.beg);
-        int i = 0;
-        string line;
-        while (getline(file, line))
-        {
-            i++;
 
+    std::string stringFindChar(const std::string str, size_t pos, const char ch, bool revers)
+    {
+        std::string temp = "";
+        if (revers) {
+            while (pos--) {
+                if (str[pos] == ch) { break; }
+                temp = str[pos] + temp;
+            }
         }
-        file.close();
-        return i;
+        else
+        {
+            while (pos != str.length()) {
+                if (str[pos] == ch) { break; }
+                 temp += str[pos];
+                 pos++;
+            }
+        }
+        return temp;
     }
+    //
 };
-//
-int main()
-{
-    setlocale(LC_ALL, "Russian");
-   
-    Player   MyPlayer(file_,true);
 
-    system("pause");
-    return 0;
+/*       main func */
+int main() {
+	setlocale(LC_ALL, "Russian");
+    TrackList* ptrTrackList = new TrackList();
+    ptrTrackList->file_name = file_;
+    ptrTrackList->show();
+    delete ptrTrackList;
+    ptrTrackList = nullptr;
+	system("pause");
+	return 0;
 }
+

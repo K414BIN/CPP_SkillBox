@@ -1,9 +1,2 @@
-Name of track: Hotel California
-Duration of audio record: 1234
-Date of creation: 03/04/2001
-Name of track: Hotel California
-Duration of audio record: 1234
-Date of creation: 03/04/2001
-Name of track: Master of Puppets
-Duration of audio record: 123
-Date of creation: 04/05/1992
+Alice	123	01/02/2001
+Op sdsd	131	04/05/2022
