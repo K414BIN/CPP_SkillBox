@@ -10,6 +10,7 @@ const int XXCentury = 1900;
 const int currentYear= 2022;
 const std::string file_ = "audiotracks.txt";
 
+/* Class Track begin */
 class Track
 {
 public:
@@ -31,12 +32,21 @@ private:
         return tm;
     }
 };
+/* Class Track end */
 //
-class TrackList
+/* Class TrackList begin */
+class TrackList : Track
 {
 public:
     std::string file_name = file_;
-
+    // constructor by default
+    TrackList() {}
+    // modified constructor
+    TrackList(std::string text)
+    {
+        file_name = text;
+    }
+    // Show 1 Track
     void showOne(std::ostream& out, Track inp)
     {
         int userDay = inp.date.tm_mon;
@@ -53,11 +63,19 @@ public:
         out << total;
         out << "\n";
     }
-  //
-    void show()
+  // Show All Track list
+    void showClass()
     {
         std::cout << "\tName\t\tDuration\t\tDate\n";
-        showClass(std::cout, tracks);
+        show (std::cout, tracks);
+    }
+    //get 1 Track
+   Track getOne(int val)
+    {
+        val--;
+        if (val > list_count) val = list_count;
+        if (val < 0) val = 0;
+        return tracks[val];
     }
     //
 private:
@@ -67,16 +85,11 @@ private:
   //
 	int howManyLines(std::string file_name)
 	{
-		using namespace std;
-		ifstream file(file_name);
-
-		file.seekg(0, file.beg);
+		std::ifstream file(file_name);
+        file.seekg(0, file.beg);
 		int i = 0;
-		string line;
-		while (getline(file, line))
-		{
-			i++;
-		}
+		std::string line;
+        while (std::getline(file, line)) { i++; }
 		file.close();
 		return i;
 	}
@@ -150,11 +163,11 @@ private:
             std::cout << "\nError open file!\n";
             return;
         }
-        showClass(file_out, records);
+        show(file_out, records);
         file_out.close();
     }
     //
-    void showClass(std::ostream& file, std::vector<Track>& records)
+    void show(std::ostream& file, std::vector<Track>& records)
     {
         for (auto& it : records)
         {
@@ -252,11 +265,12 @@ private:
         
         return treck;
     }
-
+    //
     std::string stringFindChar(const std::string str, size_t pos, const char ch, bool revers)
     {
         std::string temp = "";
-        if (revers) {
+        if (revers) 
+        {
             while (pos--) {
                 if (str[pos] == ch) { break; }
                 temp = str[pos] + temp;
@@ -271,18 +285,127 @@ private:
             }
         }
         return temp;
+    }    
+};
+/* Class TrackList end */
+//
+/* Class Commands begin */
+class Commands 
+{
+public:  
+    //
+    void pause(int val)
+    {
+        if (val < 0) return;
+        if (val == track_num) 
+        {
+            std::cout << "Playback paused. Track is #" << track_num;
+            std::cout << std::endl;
+        }
     }
     //
-};
+    void  stop(int val)
+    {
+        if (val < 0) return;
+        if (val == track_num)
+        {
+            std::cout << "Playback stopped. Track is #" << track_num;
+            std::cout << std::endl;
+        }
+    }
+    //
+    void exit()
+    {
+        delete records;
+        records = nullptr;
+    }
+    //
+    int  next(int  val)
+    {
+        return val++;
+    }
+    //
+    int play(int val)
+    {
+        if (val != track_num) {
+            records->showClass();
+            std::cout << "\nChoose track to play ";
+            std::cin >> track_num;
+            std::cout << std::endl;
+            std::cout << "Track to play is #" << track_num;
+            std::cout << std::endl;
+            records->showOne(std::cout, records->getOne(track_num));
+        }
+        return val;
+    }
 
+    int track_num = -1;
+private:
+    TrackList* records = new TrackList(file_);
+
+};
+/* Class Commands end */
+//
+/* Class Player begin */
+class Player 
+{
+    std::vector <std::string> commands = { "play","pause","exit","stop","next" };
+
+    int itemFromStr(std::string action)
+    {
+        int item;
+        for (item = 0; item < commands.size(); item++)
+            if (commands[item] == action) break;
+        item++;
+        return item;
+    }
+    int item = ((action.empty()) ? item : itemFromStr(action));
+
+public:   
+    std::string action;   
+
+    void Start()
+    {
+        Commands* ptrCommands = new Commands();
+        
+        switch (item)
+        {
+        case 1: ptrCommands->track_num = ptrCommands->play(ptrCommands->track_num);    break;
+        case 2: ptrCommands->pause(ptrCommands->track_num);    break;
+        case 3: ptrCommands->exit();   exit(8);  break;
+        case 4: ptrCommands->stop(ptrCommands->track_num);     break;
+        case 5: ptrCommands->track_num = ptrCommands->play(ptrCommands->next(ptrCommands->track_num));    break;
+        default:  ptrCommands->track_num = ptrCommands->play(item);    break;
+        }
+        delete ptrCommands;
+        ptrCommands = nullptr;
+    }
+};
+/* Class Player end */
+//
 /*       main func */
 int main() {
+ 
 	setlocale(LC_ALL, "Russian");
-    TrackList* ptrTrackList = new TrackList();
-    ptrTrackList->file_name = file_;
-    ptrTrackList->show();
-    delete ptrTrackList;
-    ptrTrackList = nullptr;
+    std::string action;
+    Player* ptrCommands = new Player();
+    std::cout << "\n\tWelcome to MyPlayer(tm)! \n";
+    do {
+        std::cout << "The MyPlayer has these commands:\n";
+        std::cout << "1) Play\n";
+        std::cout << "2) Pause\n";
+        std::cout << "3) Exit\n";
+        std::cout << "4) Stop\n";
+        std::cout << "5) Next\n";
+        std::cout << "\nType commmand here: ";
+        std::cin >> action;
+        ptrCommands->action = action;
+        ptrCommands->Start();
+    } while (true);
+
+     delete ptrCommands;
+     ptrCommands = nullptr;
+     
 	system("pause");
 	return 0;
 }
