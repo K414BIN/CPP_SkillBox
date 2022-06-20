@@ -1,14 +1,31 @@
 #include "contact.h"
 
-Contact::Contact(std::string _first_name,std::string _last_name,std::string _phone_num)
+void Contact::setFirstName(std::string text)
 {
-    first_name =_first_name;
-    last_name = _last_name;
-    phone_num = _phone_num;
-       
+	first_name = text;
 }
-//
-void Contact::makeIt()
- { 
-    std::cerr << "Error. Not available for base type.\n" ;
- }
+
+std::string Contact::getFirstName()
+{
+	return 	first_name;
+}
+
+void Contact::setLastName(std::string text)
+{
+	last_name = text;
+}
+
+std::string Contact::getLastName()
+{
+	return last_name;
+}
+
+void Contact::setPhoneNum(std::string text)
+{
+	phone_num = text;
+}
+
+std::string Contact::getPhoneNum()
+{
+	return phone_num;
+}

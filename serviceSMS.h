@@ -10,9 +10,10 @@
 class serviceSMS: public Contact 
 {
 	public:
-   	 serviceSMS(std::string phone_num ) : Contact (first_name,last_name,phone_num);
+   	 serviceSMS();
+	
 	 ~serviceSMS();
-     void makeIt() ;
+    
 };
 #endif
 
