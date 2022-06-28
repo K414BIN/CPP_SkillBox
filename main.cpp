@@ -1,18 +1,16 @@
 
-#include <string>
-#include <ctime>
-#include <fstream>
+
 #include <iostream>
-#include <vector>
-#include <ostream>
 #include "mobile.h"
+
 
 
 int main()
 {
-	setlocale(LC_ALL, "en-US");
-	Mobile* cellPhone = new Mobile();
+	setlocale(LC_ALL, "en-GB");
 
+	Mobile* cellPhone = new Mobile();
+	cellPhone->showAll();
 	delete cellPhone;
 	cellPhone = nullptr;
 

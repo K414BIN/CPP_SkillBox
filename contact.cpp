@@ -29,3 +29,11 @@ std::string Contact::getPhoneNum()
 {
 	return phone_num;
 }
+
+Contact::Contact()
+{
+}
+
+Contact::~Contact()
+{
+}

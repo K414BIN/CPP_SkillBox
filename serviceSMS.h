@@ -7,11 +7,10 @@
 #ifndef SERVICESMS_H
 #define SERVICESMS_H
 
-class serviceSMS: public Contact 
+class serviceSMS
 {
 	public:
    	 serviceSMS();
-	
 	 ~serviceSMS();
     
 };
