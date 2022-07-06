@@ -63,22 +63,22 @@ private:
             return std::tie(userDay, userMonth, userYear);
         }
         //
-        void setName(std::string text)
+        void setName(const std::string& text)
         {
             name = text;
         }
         //
-        std::string getName()
+        std::string getName() const
         {
             return name;
         }
         //
-        void setDuration(std::time_t time)
+        void setDuration(const std::time_t& time)
         {
             duration = time;
         }
         //
-        std::time_t getDuration()
+        std::time_t getDuration() const
         {
             return duration;
         }
@@ -87,7 +87,7 @@ private:
 public:
     /* Class TrackList functions */
 
-    void setFilename(std::string text)
+    void setFilename(const std::string& text)
     {
         file_name = text;
     }
@@ -125,7 +125,7 @@ public:
         return tracks[val];
     }
    //
-   int getRecordsCounter()
+   int getRecordsCounter() const
    {
        return list_count;
    }
@@ -138,7 +138,7 @@ private:
 
     /* Class TrackList  functions */
     //
-	int howManyLines(std::string file_name)
+	int howManyLines(const std::string& file_name)
 	{
 		std::ifstream file(file_name);
         file.seekg(0, file.beg);
@@ -229,12 +229,12 @@ private:
         }
     }
     //
-    bool is_leap_year(int year)
+    bool is_leap_year(int &year)
     {
         return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
     }
     //
-    int days(int year, int month)
+    int days(int &year, int &month)
     {
         bool value = is_leap_year(year);
         int days = 28;
@@ -318,7 +318,7 @@ private:
         return treck;
     }
     //
-    std::string stringFindChar(const std::string str, size_t pos, const char ch, bool revers)
+    std::string stringFindChar(const std::string& str, size_t pos, const char ch, bool revers)
     {
         std::string temp = "";
         if (revers) 
