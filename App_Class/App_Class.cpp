@@ -1,26 +1,24 @@
 #define  _CRT_SECURE_NO_WARNINGS
+
 #include <string>
+#include <tuple>      
 #include <ctime>
-#include <vector>
-#include <fstream>
 #include <iostream>
-#include <ostream>
-#include <tuple>
+#include <vector>
+#include <algorithm>
+#include <fstream>    
+
 
 const int XXCentury = 1900;
 const int currentYear= 2022;
-const std::string file_ = "audiotracks.txt";
+const std::string file_n = "audiotracks.txt";
 
+using namespace std;
 /* Class TrackList begin */
 class TrackList
 {
-    //
-private:
-    /* Class TrackList items */
-
-    std::string file_name = file_;
-
-    /* inner Class Track begin */
+/* +++++++++++++++++ */    
+   /* inner Class Track begin */
     class Track
     {
         /* Class Track items */
@@ -38,29 +36,24 @@ private:
             tm.tm_mday = local->tm_mday;
             tm.tm_hour = 0;
             tm.tm_min = 0;
-            tm.tm_sec = 0;
+            tm.tm_sec = 0;	
             return tm;
-
         }
     public:
         /* Class Track functions */
         //
-        void setDate(int userDay, int userMonth, int userYear)
+        void setDate(const int userMonth, const int userYear)
         {
-           
            date.tm_year = userYear - XXCentury;
-           date.tm_mon = userMonth - 1;
-           date.tm_mday = userDay;
-           
+           date.tm_mon = userMonth - 1;               
         }
         //
-        std::tuple <int, int, int> getDate()
-        {
-            int userDay = date.tm_mon;
+        std::tuple < int, int> getDate() const
+	{         
             int userMonth = 1 + date.tm_mon;
             int userYear = XXCentury + date.tm_year;
             int count = 1;
-            return std::tie(userDay, userMonth, userYear);
+            return std::tie(userMonth, userYear);
         }
         //
         void setName(const std::string& text)
@@ -84,178 +77,61 @@ private:
         }
     };
     /* inner Class Track end */
+ /* Class TrackList functions */
+  /* +++++++++++++++++ */    
+int howManyLines(const std::string& file_name)/* showAll func*/
+{
+	std::ifstream file(file_name);
+	int i = 0;
+	if (file.good()) 
+	{
+			std::string line;
+			file.seekg(0, file.beg);
+			while (std::getline(file, line))
+			{ 
+									i++;
+									std::cout << i<<") "<< line <<std::endl;
+			}			
+	}
+	file.close();
+	return i;
+}
+/* +++++++++++++++++ */    
 public:
-    /* Class TrackList functions */
-
-    void setFilename(const std::string& text)
-    {
-        file_name = text;
-    }
-    //
-    // Show 1 Track
-    void showOne(std::ostream& out, Track inp)
-    {
-        int userDay;
+void showOne(std::ostream& out, Track* inp)
+{
         int userMonth;
         int userYear;
-        std::tie(userDay, userMonth, userYear) = inp.getDate();
-        int count = 1;
-
-        std::string  total = (userDay < 10 ? "0" + std::to_string(userDay) : std::to_string(userDay));
-        total += "/";
-        total += (userMonth < 10 ? "0" + std::to_string(userMonth) : std::to_string(userMonth));
+        std::tie( userMonth, userYear) = inp->getDate();    
+        std::string total = (userMonth < 10 ? "0" + std::to_string(userMonth) : std::to_string(userMonth));
         total += "/" + std::to_string(userYear);
-        out << inp.getName() << "\t";
-        out << inp.getDuration() << "\t";
+        out << inp->getName() << "\t";
+        out << inp->getDuration() << "\t";
         out << total;
         out << "\n";
-    }
-  // Show All Track list
-    void showClass()
-    {
-        std::cout << "\tName\t\tDuration\t\tDate\n";
-        show (std::cout, tracks);
-    }
-    //get 1 Track
-   Track getOne(int val)
-    {
-        val--;
-        if (val > list_count) val = list_count;
-        if (val < 0) val = 0;
-        return tracks[val];
-    }
-   //
-   int getRecordsCounter() const
-   {
-       return list_count;
-   }
-
+}
+/* +++++++++++++++++ */    
+std::string setFilename( )
+{
+	std::cout <<"\nPlease, enter filename for track list ";
+	std::string text;
+	getline(std::cin , text ); 
+	if (text.length() < 2) text = file_n;
+	return text;
+}
+/* +++++++++++++++++ */    
+std::string getFilename() const
+{
+	return  file_name;
+}
+ /* Class TrackList functions */
 private:
-    /* Class TrackList items */
-	int linesCount = TrackList::howManyLines(file_name) - 1 ;
-    std::vector<Track>  tracks  = TrackList::collectRecords(linesCount);
-    int list_count = ((!tracks.empty()) ? tracks.size() : 0);
-
-    /* Class TrackList  functions */
-    //
-	int howManyLines(const std::string& file_name)
-	{
-		std::ifstream file(file_name);
-        file.seekg(0, file.beg);
-		int i = 0;
-		std::string line;
-        while (std::getline(file, line)) { i++; }
-		file.close();
-		return i;
-	}
-    //
-    Track loadRecord(std::ifstream& file)
-    {
-        Track treck = {};
-        using namespace std;
-        if (file.bad()) {
-            std::cout << "\nError open file!\n";
-            return treck;
-        }
-        string name;
-        time_t temp = 9;
-       
-        getline(file, name);
-     
-        string strTemp = stringFindChar(name, name.length(), '/', true);
-        int userYear = stoi(strTemp);
-        size_t sum = name.length() - strTemp.length() - 1;
-        strTemp = stringFindChar(name, sum, '/', true);
-        int userMonth = stoi(strTemp);
-        sum = sum - strTemp.length() - 1;
-        strTemp = stringFindChar(name, sum, '\t', true);
-        int userDay = stoi(strTemp);
-        sum = sum - strTemp.length() - 1;
-        strTemp = stringFindChar(name, sum, '\t', true);
-        temp = (time_t)stoi(strTemp);
-        strTemp = stringFindChar(name, 0, '\t', false);
-        treck.setDuration(temp);
-        treck.setDate(userDay, userMonth, userYear);
-        treck.setName(strTemp);
-        
-        return treck;
-    }
-    //
-    std::vector<Track> collectRecords(int linesCount)
-	{
-        bool answer = false;
-        std::vector<Track> records;
-        records.clear();
-        if (linesCount > 0)
-        {
-            std::ifstream file_in(file_name);
-            file_in.seekg(0, file_in.beg);
-            do
-            {
-                records.emplace_back(loadRecord(file_in));
-            }  while (linesCount--);
-            file_in.close();
-        }
-        else 
-        {
-           do 
-            {
-                records.emplace_back(addRecord());
-                std::cout << "Add another audio record? [1 - yes / 0 - no] : ";
-                std::cin >> answer;
-            } while (answer);
-
-              saveRecords(records);
-        }
-        return records;
-	}
-    //
-    void saveRecords(std::vector<Track> &records)
-    {
-        std::ofstream file_out(file_name, std::ios::app);
-        if (!file_out.is_open()) {
-            std::cout << "\nError open file!\n";
-            return;
-        }
-        show(file_out, records);
-        file_out.close();
-    }
-    //
-    void show(std::ostream& file, std::vector<Track>& records)
-    {
-        for (auto& it : records)
-        {
-             showOne(file, it);
-        }
-    }
-    //
-    bool is_leap_year(int &year)
-    {
-        return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
-    }
-    //
-    int days(int &year, int &month)
-    {
-        bool value = is_leap_year(year);
-        int days = 28;
-        switch (month) {
-        case 2:  if (value) days++;  break;
-        case 4:
-        case 6:
-        case 9:
-        case 11: days += 2; break;
-        default: days += 3; break;
-        }
-        return days;
-    }
-    //
-    Track addRecord()
-    {
-        using namespace std;
+/* +++++++++++++++++ */  
+Track addRecord()
+{   
         Track  treck = {};
         string name;
-        int userDay;
-        int userMonth;
+	int userMonth;
         int userYear;
         time_t temp;
         do {
@@ -264,7 +140,7 @@ private:
         } while (name.length() < 2);
         treck.setName(name);
         cout << endl;
-        cout << "Please, enter the date of creation of àudio record: ";
+        cout << "Please, enter the date of creation of audio record: ";
         cout << endl;
         //      
         do {
@@ -294,21 +170,7 @@ private:
             }
         } while (userMonth < 1 || userMonth > 12);
         //
-        int compDays = days(userYear, userMonth);
-        do {
-            cout << "Day: ";
-            cin >> name;
-            try
-            {
-                userDay = stoi(name);
-            }
-            catch (const std::exception&)
-            {
-                userDay = 9;
-            }
-        } while (userDay < 1 || userDay > compDays);
-        //
-        treck.setDate(userDay, userMonth, userYear);
+        treck.setDate( userMonth, userYear);
         cout << endl;
         cout << "Please, enter the duration of the audio record: ";
         cin >> temp;
@@ -317,8 +179,33 @@ private:
         
         return treck;
     }
-    //
-    std::string stringFindChar(const std::string& str, size_t pos, const char ch, bool revers)
+/* +++++++++++++++++ */ 
+void saveRecord(Track* record, std::string& file_name)
+    {
+        std::ofstream file_out(file_name, std::ios::app);
+        if (file_out.good()) showOne(file_out, record);            
+        else std::cout << "\nError open output file!\n";
+        file_out.close();
+    }
+ /* +++++++++++++++++ */    
+int createList(std::string& file_name)
+{
+	bool answer = false;
+	int counter =0;
+	do {
+	counter++;	
+	Track* ptr_addRecord = new Track();
+	*ptr_addRecord = addRecord();
+	saveRecord(ptr_addRecord, file_name);
+	std::cout << "Add another audio record? [1 - yes / 0 - no] : ";
+	std::cin >> answer;
+	delete ptr_addRecord;
+	ptr_addRecord = nullptr;	
+	} while (answer);	
+	return counter;
+}
+/* +++++++++++++++++ */    
+std::string stringFindChar(const std::string& str, size_t pos, const char ch, bool revers)
     {
         std::string temp = "";
         if (revers) 
@@ -338,57 +225,85 @@ private:
         }
         return temp;
     }    
-};
-/* Class TrackList end */
-//
-/* Class Player begin */
-class Player 
+/* +++++++++++++++++ */    
+public:
+Track* loadOneRecord(const std::string& file_name, int num)
 {
+	std::string serviceStr1;
+	Track* ptr_Track = new Track();    
+	std::ifstream file(file_name);
+	if (!file.good()) {
+            std::cout << "\nError open file!\n";
+            return ptr_Track;
+        }
+	for (size_t i = 0; i <= num;  i++)  std::getline(file, serviceStr1);
+	file.close();		
+	std::string serviceStr2 = serviceStr1;
+        string serviceStr3 = stringFindChar(serviceStr2, serviceStr2.length(), '/', true);
+        int userYear = stoi(serviceStr3);
+        serviceStr2 = stringFindChar(serviceStr1, serviceStr1.length()-serviceStr3.length()-1, '/',true);
+	serviceStr3 ="";
+	serviceStr3 +=serviceStr2[ serviceStr2.length() -2 ];
+	serviceStr3 +=serviceStr2[ serviceStr2.length() -1 ] ;	
+        int userMonth = stoi(serviceStr3);
+        serviceStr3= stringFindChar(serviceStr1, 0, '\t', false);	
+	serviceStr2 = stringFindChar(serviceStr1, serviceStr3.length()+1, '\t', false);
+	ptr_Track->setName(serviceStr3);
+	time_t temp = (time_t ) stoi( serviceStr2);
+        ptr_Track->setDuration(temp);
+        ptr_Track->setDate( userMonth, userYear);
+        return ptr_Track;
+    }
+ /* +++++++++++++++++ */   
+ int  getCounterLines(std::string &text)
+{
+	int counter =  howManyLines(text);
+	if (counter == 0) counter = createList(text);
+	counter = counter - 1;
+	linesCount = counter;
+	return  linesCount;
+}    
+/* +++++++++++++++++ */   
+int getLinesCounter()
+{
+	return linesCount;
+}
+/* +++++++++++++++++ */   
 private:
-    /* inner Class Commands begin */
-    class Commands
-    {
-    public:
-        /* Class Commands functions */
-        //
-        void pause(int val)
-        {
-           std::cout << "Playback paused. Track is #" << val << std::endl;
-        }
-        //
-        void stop(int val)
-        {
-            std::cout << "Playback stopped. Track is #" << val << std::endl;
-        }
-        //
-        bool exit()
-        {
-            return false;
-        }
-        //
-        void play(int val)
-        {
-           std::cout << "Track to play is #" << val<< std::endl;
-        }
-    };
-    /* inner Class Commands end */
-
-    /* Class Player items */
-     std::vector <std::string> commands = { "play","pause","exit","stop","next" };
-    /* Class Player functions */
-    int itemFromStr(std::string action)
+   /* Class TrackList items */
+    std::string file_name = setFilename();
+    int linesCount=0;
+};     /*  Class TrackList end */
+/* +++++++++++++++++ */  
+/*  Class Commands begin */
+class Commands
+{
+	   /* Class Commands items */
+	std::vector <string>  commands  = { "play","pause","exit","stop","next" };
+/* +++++++++++++++++ */  
+public:	
+		 /* Class Commands functions */
+int itemFromStr(std::string action)
     {
         int item;
         for (item = 0; item < commands.size(); item++)
             if (commands[item] == action) break;
         item++;
+	    menu_num =item;
         return item;
     }
-    //
-    std::string setCommnand()
-    {
-        std::string action;
-   
+  /* +++++++++++++++++ */  
+std::string parsingStrToLowerCase(std::string text)
+{
+    for_each(text.begin(), text.end(), [](char& c) {
+        c = tolower(c);
+        });
+    return text;
+}
+/* +++++++++++++++++ */  
+std::string setCommnand()
+{
+        std::string action;   
         std::cout << "The MyPlayer has these commands:\n";
         std::cout << "1) Play\n";
         std::cout << "2) Pause\n";
@@ -397,73 +312,127 @@ private:
         std::cout << "5) Next\n";
         std::cout << "\nType commmand here: ";
         std::cin >> action;
-        return action;
-    }
-    //Randomize tracks
-    int recNow(int max) {
-        int x;
-        do {
-            x = 1 + std::rand() / ((RAND_MAX + 1u) / max);
-        } while (x >= max);
-        return x;
-    }
-public:   
-    /* Class Player functions */
-      void Start(std::string text)
-    {
-        int max_records = 0;
-        int track_num = -32;
-        Commands* ptrCommands = new Commands();
-        TrackList* ptrTrackList = new TrackList();
-        ptrTrackList->setFilename(text);
-        ptrTrackList->showClass();
-        max_records = ptrTrackList->getRecordsCounter();
-        std::cout << "\nChoose track ";
-        std::cin >> track_num;
-     
-        if ((track_num < 1) || (max_records < track_num)) track_num = 1;
-        bool done = false;
-        bool log_out = true;
-        do {
-            std::cout << std::endl;
-            int item = itemFromStr(setCommnand());
-            switch (item)
-            {
-            case 5: track_num = recNow(max_records); if (max_records < track_num) track_num = 1;
-            case 1: if (!done )
-                    {
-                    ptrCommands->play(track_num); ptrTrackList->showOne(std::cout, ptrTrackList->getOne(track_num)); done = true;
-                    }
-                    break;
-            case 2: if (done) ptrCommands->pause(track_num); done = false; break;
-            case 3: log_out = ptrCommands->exit(); break;
-            case 4: if (done) ptrCommands->stop(track_num); done = false; break;
-
-            }
-        } while (log_out);
-        delete ptrCommands;
-        ptrCommands = nullptr;
-        delete ptrTrackList;
-        ptrTrackList = nullptr;
-    }
+	action  = parsingStrToLowerCase(action);
+        return  action;
+}
+    /* +++++++++++++++++ */  
+       /* Class Commands items */
+	int menu_num = 3;	
+};      /*  Class Commands end */
+/* +++++++++++++++++ */  
+  /*  Class Player begin */
+class Player
+{	
+	     /* Class Player items */
+		TrackList *MyPlayer = new TrackList();
+		Commands *Item = new Commands();
+		int track_num = 0;
+		int current_rec = 0;	
+		enum status 
+		{
+			PLAY = 16,
+			PAUSE = 32,
+			STOP = 64,
+		};	
+	 /* Class Player functions */
+/* +++++++++++++++++ */  	
+	int getListItem(int maxLevel)
+	{
+		bool done = false;
+		int num =0 ;
+		do {				
+		std::cout << "Please, choose the record number > ";
+		std::cin >> num;
+		done = (num > 0) && (num <= maxLevel + 1);	
+		if (done )  { num--; done =false;}
+		else 	done = true;
+		} while (done);
+			
+		return num;
+	}
+/* +++++++++++++++++ */  	
+public:
+	void createTrackList()
+	{		
+		bool playAgain = true;
+		bool done = true;
+		std::string f_name = MyPlayer->getFilename();
+	//	MyPlayer->showOne(std::cout ,  MyPlayer->loadOneRecord(MyPlayer->getFilename(),track_num));		
+		do {
+			  if (playAgain) track_num = (getListItem(MyPlayer->getCounterLines(f_name)));	
+			  playAgain = false;		
+		switch (Item->itemFromStr(Item->setCommnand()))
+		{
+		case 1: 	if  (current_rec  !=  PLAY ) current_rec = play(current_rec,track_num); 
+				break;
+		case 2: 	if  ( current_rec  != STOP ) current_rec =pause( current_rec, track_num);   
+				break;
+		case 3: 	done = false;
+				break;
+		case 4: 	if  ( current_rec  != STOP ) current_rec = xit(current_rec); playAgain = true ;
+				break;
+		case 5: 	current_rec =0; track_num=next(track_num); current_rec = play(current_rec,track_num);
+				break;
+		default: 	if  (current_rec !=  PLAY ) current_rec = play(current_rec,track_num); 
+				break;
+		};
+			} while (done);
+		
+		delete MyPlayer;
+		MyPlayer = nullptr;
+		delete Item;
+		Item = nullptr;		
+	}
+	/* +++++++++++++++++ */  
+	 int pause( int& status ,int rec)
+	{		
+		int local_status = status ;
+		if ( status == PAUSE  )
+			{
+				std::cout << "Playback starts. Track is #" << 1 + rec << std::endl;
+				 local_status  =   PLAY;							
+			}
+			else {
+				std::cout << "Playback paused. Track is #" << 1+ rec << std::endl;				
+				 local_status =   PAUSE;								
+			}	
+		return  local_status ;
+	}
+	/* +++++++++++++++++ */  
+	int  xit( int& status)
+	{	
+		if ( status != STOP  ) {
+			std::cout << "Player stops. \n";			
+		}
+		return STOP;
+	}
+	/* +++++++++++++++++ */  
+	int play(int& status ,int rec)
+	{
+		if  ( status !=  PLAY ) {
+		std::cout << "Playback starts. Track is #" <<1+ rec<< std::endl;
+		MyPlayer->showOne(std::cout ,  MyPlayer->loadOneRecord(MyPlayer->getFilename(),rec));			
+		}
+		return  PLAY;
+	}
+	/* +++++++++++++++++ */  
+	int  next(int rec)
+	{
+		int max =  MyPlayer->getLinesCounter();
+		int local_rec = rec +1;
+		if (local_rec > max) local_rec = 0;		
+		return  local_rec;
+	}
 };
-/* Class Player end */
-//
-/*       main func */
-int main() {
-    std::srand(std::time(nullptr));
-	setlocale(LC_ALL, "Russian");
-    std::string action;
-    Player* ptrPlayer= new Player();
-    std::cout << "\n\tWelcome to MyPlayer(tm)! \n";
-    std::cout << "Please, type file name of track lists: ";
-    std::cin >> action;
-    if (action.length() < 2) action = file_;
-    ptrPlayer->Start(action);
-    delete ptrPlayer;
-    ptrPlayer = nullptr;
-     
-	system("pause");
+  /*  Class Player end */
+/* +++++++++++++++++ */  
+/* main function */
+int main()
+{
+	setlocale(LC_ALL, "En-gb");
+	Player *_Player = new Player();
+	_Player ->  createTrackList();
+	delete _Player;
+	_Player = nullptr;   
 	return 0;
 }
-
