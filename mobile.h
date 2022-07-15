@@ -12,7 +12,7 @@ typedef std::pair <int, int> ret_val;
 
 class Mobile 
  {
-	const string text_file = "contacts.txt";
+    const std::string text_file = "contacts.txt";
 	Contact createNewContact();
 	bool checkStr(const std::string& str);
 	const int digitMax = 12;

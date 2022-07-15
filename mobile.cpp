@@ -80,7 +80,7 @@ Contact Mobile::getOne(std::ifstream& os)
 	std::cout << "\n" << inputStr[1] << "\n";
 	std::cout << "\n" << inputStr[2] << "\n";
 	std::cout << "\n" << inputStr[3] << "\n";
-	std::cout << "\n" << inputStr[4] << "\n";
+    //std::cout << "\n" << inputStr[4] << "\n";
 
 	book.setFirstName(inputStr[1]);
 	book.setLastName(inputStr[2]);
